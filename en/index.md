@@ -42,17 +42,21 @@ After all tokens are distributed, the group assembles them together to unlock th
 4. **Print the game plan** — interactive HTML with editable tables
 5. **Run the party** — read story prompts, play games, fill in results
 
-## Structure
+## Navigation
 
-```
-en/          ← You are here (English)
-de/          ← German version
-templates/   ← Language-neutral starter templates
-```
-
-## Examples
-
-- [Cats & Mice](examples/cats-and-mice/) — House cat is on vacation, mice hunt for hidden cheese
+| Section | Description |
+|---------|-------------|
+| **📖 Docs** | |
+| [Framework Design](docs/design) | Architecture, token binding mechanics, print design |
+| [Game Catalog](docs/game-catalog) | Theme-independent game collection |
+| [Customization](docs/customization) | How to adapt the framework |
+| **🎮 Examples** | |
+| [Cats & Mice](examples/cats-and-mice/) | House cat is on vacation, mice hunt for hidden cheese |
+| **🛠️ Templates** | |
+| [Racket Template](../templates/racket-template.html?lang=en) | 1:1 printable craft template with size slider |
+| **🌍 Languages** | |
+| [Deutsch](../de/) · [Français](../fr/) | Other language versions |
+| [← Home](../) | Back to landing page |
 
 ## Game Design Principles
 

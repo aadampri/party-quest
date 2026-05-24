@@ -42,17 +42,21 @@ Nachdem alle Tokens verteilt sind, setzt die Gruppe sie zusammen, um das Finale 
 4. **Spielplan drucken** — interaktives HTML mit editierbaren Tabellen
 5. **Party durchführen** — Story-Texte vorlesen, Spiele spielen, Ergebnisse eintragen
 
-## Struktur
+## Navigation
 
-```
-de/          ← Du bist hier (Deutsch)
-en/          ← Englische Version
-templates/   ← Sprachneutrale Starter-Vorlagen
-```
-
-## Beispiele
-
-- [Katzen & Mäuse](examples/katzen-und-maeuse/) — Der Hauskater ist im Urlaub, Mäuse suchen den versteckten Käse
+| Bereich | Beschreibung |
+|---------|-------------|
+| **📖 Doku** | |
+| [Framework-Design](docs/design) | Architektur, Token-Bindungs-Mechanik, Druck-Design |
+| [Spielekatalog](docs/spielekatalog) | Themenunabhängige Spielesammlung |
+| [Anpassung](docs/anpassung) | Wie man das Framework anpasst |
+| **🎮 Beispiele** | |
+| [Katzen & Mäuse](examples/katzen-und-maeuse/) | Der Hauskater ist im Urlaub, Mäuse suchen den versteckten Käse |
+| **🛠️ Vorlagen** | |
+| [Schläger-Vorlage](../templates/racket-template.html?lang=de) | 1:1 Bastelvorlage mit Größen-Slider |
+| **🌍 Sprachen** | |
+| [English](../en/) · [Français](../fr/) | Andere Sprachversionen |
+| [← Startseite](../) | Zurück zur Hauptseite |
 
 ## Spieldesign-Prinzipien
 

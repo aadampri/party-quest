@@ -34,22 +34,18 @@ Après que tous les jetons sont distribués, le groupe les assemble pour débloq
 | Jetons | Pièces de puzzle ou autocollants | = joueurs |
 | Finale | Récompense de groupe | 1 |
 
-## Structure
+## Navigation
 
-```
-fr/
-├── README.md          ← ce fichier
-├── docs/
-│   ├── design.md      ← philosophie du framework
-│   ├── catalogue-jeux.md ← catalogue de jeux thème-indépendant
-│   └── personnalisation.md ← guide d'adaptation
-└── examples/
-    └── chats-et-souris/  ← exemple complet thématique
-```
-
-## Démarrage rapide
-
-1. Lire `docs/design.md` pour la philosophie
-2. Parcourir `docs/catalogue-jeux.md` pour les jeux disponibles
-3. Voir `examples/chats-et-souris/` pour un exemple complet
-4. Utiliser `../templates/` pour les gabarits partagés
+| Section | Description |
+|---------|-------------|
+| **📖 Docs** | |
+| [Design du Framework](docs/design) | Architecture, mécanique de liaison, design d'impression |
+| [Catalogue de Jeux](docs/catalogue-jeux) | Collection de jeux indépendante du thème |
+| [Personnalisation](docs/personnalisation) | Comment adapter le framework |
+| **🎮 Exemples** | |
+| [Chats & Souris](examples/chats-et-souris/) | Le chat est en vacances, les souris cherchent le fromage caché |
+| **🛠️ Gabarits** | |
+| [Gabarit Raquette](../templates/racket-template.html?lang=fr) | Gabarit 1:1 imprimable avec curseur de taille |
+| **🌍 Langues** | |
+| [Deutsch](../de/) · [English](../en/) | Autres versions linguistiques |
+| [← Accueil](../) | Retour à la page d'accueil |
