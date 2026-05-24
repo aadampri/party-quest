@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Party Quest 🎉</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  h1 { font-size: 2.2em; margin-bottom: 10px; }
+  .subtitle { color: #666; font-size: 1.1em; margin-bottom: 30px; }
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  .lang-btn {
+    display: block;
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .lang-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .lang-de { background: #fff3cd; color: #856404; }
+  .lang-en { background: #cce5ff; color: #004085; }
+  .lang-fr { background: #d4edda; color: #155724; }
+  
+  h2 { font-size: 1.2em; color: #333; margin-bottom: 15px; }
+  .templates {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+  .tpl-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.15s;
+  }
+  .tpl-link:hover { background: #e9ecef; }
+  .tpl-link .icon { font-size: 1.4em; }
+  .tpl-link .label { font-weight: 600; }
+  .tpl-link .desc { font-size: 0.85em; color: #666; }
+
+  .credits {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  .credits a { color: #666; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🎉 Party Quest</h1>
+  <p class="subtitle">A multilingual framework for structured kids' party games</p>
+
+  <div class="lang-grid">
+    <a href="de/" class="lang-btn lang-de">🇩🇪 Deutsch</a>
+    <a href="en/" class="lang-btn lang-en">🇬🇧 English</a>
+    <a href="fr/" class="lang-btn lang-fr">🇫🇷 Français</a>
+  </div>
+
+  <h2>🛠️ Interactive Templates</h2>
+  <div class="templates">
+    <a href="templates/racket-template.html?lang=de" class="tpl-link">
+      <span class="icon">🐱</span>
+      <span>
+        <span class="label">Katzen-Schläger</span><br>
+        <span class="desc">1:1 Bastelvorlage mit Größen-Slider (DE)</span>
+      </span>
+    </a>
+    <a href="templates/racket-template.html?lang=en" class="tpl-link">
+      <span class="icon">🐱</span>
+      <span>
+        <span class="label">Cat Racket</span><br>
+        <span class="desc">1:1 craft template with size slider (EN)</span>
+      </span>
+    </a>
+    <a href="templates/racket-template.html?lang=fr" class="tpl-link">
+      <span class="icon">🐱</span>
+      <span>
+        <span class="label">Raquette Chat</span><br>
+        <span class="desc">Gabarit 1:1 avec curseur de taille (FR)</span>
+      </span>
+    </a>
+  </div>
+
+  <p class="credits">
+    Cup-racket concept based on <a href="https://jetzt-kommt-kurth.de/media/47/e8/8b/1770885149/vorlage_solo_ping_pong.pdf">"Solo Ping Pong"</a> 
+    by <a href="https://jetzt-kommt-kurth.de">Jetzt kommt Kurth</a> · 
+    <a href="https://github.com/aadampri/party-quest">Source on GitHub</a>
+  </p>
+</div>
+
+</body>
+</html>
