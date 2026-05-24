@@ -15,6 +15,8 @@ Mit Pfotenabdruck-Stempel übergeben.
 
 ## Kernmechanik (bewährtes Design)
 
+> Siehe [Framework-Design — Token-Bindungs-Mechanik](../../docs/design.md#token-bindungs-mechanik) für den vollständigen abstrakten Designraum.
+
 **Kernschleife (auf allen Stufen gleich):** Spiel gewinnen → Gewinner wählt Empfänger → Empfänger erhält etwas.
 
 ### Komplexitätsstufen

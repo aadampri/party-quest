@@ -15,6 +15,8 @@ Deliver with a paw print stamp.
 
 ## Core Mechanics (proven design)
 
+> See [Framework Design — Token Binding Mechanics](../../docs/design.md#token-binding-mechanics) for the full abstract design space.
+
 **Core loop (same at all levels):** Win game → winner picks recipient → recipient claims something.
 
 ### Complexity Levels
