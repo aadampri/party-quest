@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # Party Quest
 
 A framework for designing structured kids' party games with a quest narrative arc.

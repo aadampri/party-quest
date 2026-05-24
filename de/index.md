@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # Party Quest
 
 Ein Framework für strukturierte Kinder-Partyspiele mit einer Quest-Erzählstruktur.

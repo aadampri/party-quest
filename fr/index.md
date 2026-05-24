@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # Party Quest
 
 Un framework pour des jeux de fête structurés pour enfants avec un arc narratif de quête.
