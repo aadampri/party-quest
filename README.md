@@ -30,6 +30,10 @@ Party Quest provides a reusable structure for children's party games. Instead of
 4. Look at `examples/` for complete themed instances
 5. Use `templates/` to start your own theme
 
+## Credits & Inspiration
+
+- **Cup-Racket ("Solo Ping Pong")** — Original craft idea and PDF template by [Jetzt kommt Kurth …](https://jetzt-kommt-kurth.de), a kindergarten & school supply shop in Mönchengladbach, Germany. [Original PDF](https://jetzt-kommt-kurth.de/media/47/e8/8b/1770885149/vorlage_solo_ping_pong.pdf). Our `templates/racket-template.html` is a parametric reimplementation with adjustable scale, multilingual UI, and cat-themed design.
+
 ## License
 
 MIT
