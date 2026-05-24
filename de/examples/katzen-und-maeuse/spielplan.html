@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Schatzsuche: Die Katze ist weg!</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+  h1 { text-align: center; font-size: 18pt; margin-bottom: 5px; }
+  h2 { font-size: 13pt; border-bottom: 2px solid #333; padding-bottom: 3px; margin-top: 20px; }
+  h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 12px; }
+  .story { 
+    background: #f9f5e8; 
+    border-left: 4px solid #d4a017; 
+    padding: 8px 12px; 
+    margin: 8px 0;
+    font-style: italic;
+  }
+  .rules {
+    background: #f0f4f8;
+    border-left: 4px solid #4a90d9;
+    padding: 8px 12px;
+    margin: 8px 0;
+  }
+  .rules ul { margin: 4px 0; padding-left: 20px; }
+  .rules li { margin: 2px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  th { background: #e8e8e8; }
+  td { min-height: 20px; }
+  .result-cell { min-width: 60px; height: 24px; }
+  .note { font-size: 9pt; color: #555; margin-top: 4px; }
+  .game-block { page-break-inside: avoid; margin-bottom: 10px; }
+  .section-fallback { border-top: 2px dashed #999; margin-top: 20px; padding-top: 10px; }
+  /* UI Panel */
+  .ui-panel {
+    background: #fffbe6;
+    border: 2px solid #d4a017;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .ui-panel h3 { margin: 0 0 10px 0; font-size: 12pt; }
+  .ui-panel input {
+    width: 120px;
+    padding: 4px 8px;
+    margin: 3px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 10pt;
+  }
+  .ui-panel button {
+    padding: 6px 14px;
+    margin: 5px 3px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10pt;
+  }
+  .btn-apply { background: #4a90d9; color: white; }
+  .btn-apply:hover { background: #357abd; }
+  .btn-print { background: #5cb85c; color: white; }
+  .btn-print:hover { background: #449d44; }
+  @media print {
+    .ui-panel { display: none !important; }
+    .game-block.game-hidden { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    table { border: 2px solid #000 !important; border-collapse: collapse !important; }
+    th, td { border: 1px solid #000 !important; padding: 6px 8px !important; }
+    th { background: #e8e8e8 !important; }
+    .result-cell { height: 28px !important; }
+    .game-block { break-inside: avoid; page-break-inside: avoid; }
+  }
+  .game-block.game-hidden { opacity: 0.3; }
+  .game-selector-label { font-size: 9pt; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; text-align: center; }
+  .game-selector-label.selected { background: #d4edda; border-color: #28a745; }
+  .game-selector-label.disabled { opacity: 0.5; cursor: not-allowed; }
+  .letter-page {
+    page-break-after: always;
+    height: 257mm;
+    max-height: 257mm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 100 100'%3E%3Cpath d='M35 55 C35 45 40 40 45 45 L45 55 Z' fill='%23d4a017' opacity='0.08'/%3E%3Cpath d='M55 55 C55 45 60 40 65 45 L65 55 Z' fill='%23d4a017' opacity='0.08'/%3E%3Cellipse cx='50' cy='65' rx='18' ry='14' fill='%23d4a017' opacity='0.06'/%3E%3Ccircle cx='44' cy='62' r='2' fill='%23d4a017' opacity='0.1'/%3E%3Ccircle cx='56' cy='62' r='2' fill='%23d4a017' opacity='0.1'/%3E%3Cellipse cx='50' cy='67' rx='3' ry='2' fill='%23d4a017' opacity='0.12'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    position: relative;
+  }
+  .letter-page::before {
+    content: '';
+    position: absolute;
+    top: 20px; right: 20px; bottom: 20px; left: 20px;
+    border: 3px dashed #d4a017;
+    border-radius: 15px;
+    pointer-events: none;
+  }
+  .letter-content {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 18pt;
+    line-height: 1.8;
+    max-width: 600px;
+    color: #3a2a0a;
+    padding: 30px;
+  }
+  .letter-content .signature {
+    font-size: 22pt;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  .letter-content .greeting {
+    font-size: 16pt;
+    margin-bottom: 20px;
+  }
+  .letter-title {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 28pt;
+    color: #8B4513;
+    margin-bottom: 20px;
+  }
+  .paw-emoji { font-size: 40pt; margin: 10px; }
+  @media print {
+    body { padding: 5mm; margin: 0; }
+    .page-break { page-break-before: always; }
+    .letter-page { 
+      height: 257mm; /* A4 minus margins */
+      min-height: auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    table { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+    .story { page-break-after: avoid; }
+    .rules { page-break-after: avoid; }
+    .section-fallback { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- UI PANEL (hidden when printing) -->
+<div class="ui-panel" id="uiPanel">
+  <h3>🐭 Spieler-Namen eingeben:</h3>
+  <div style="margin-bottom:8px;">
+    <label>Anzahl Spieler: <input type="number" id="playerCount" min="2" max="9" value="7" style="width:50px;" onchange="updatePlayerCount(this.value)"></label>
+    <span id="gameCountInfo" style="margin-left:10px; font-size:9pt; color:#555;"></span>
+  </div>
+  <div id="nameInputs"></div>
+  <div style="margin-top:12px;">
+    <strong>Spiele auswählen</strong> (<span id="selectedCount">0</span>/<span id="requiredCount">0</span> benötigt):
+    <div id="gameSelector" style="margin-top:5px; display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;"></div>
+  </div>
+  <div style="margin-top:10px;">
+    <button class="btn-apply" onclick="applyNames()">✓ Namen übernehmen</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Drucken / PDF</button>
+  </div>
+</div>
+
+<!-- PAGE 1: THE LETTER -->
+<div class="letter-page">
+  <div class="paw-emoji">🐾</div>
+  <div class="letter-title">Ein Brief von Monsieur Moustache</div>
+  <div class="letter-content">
+    <div class="greeting">Liebe Mäuse,</div>
+    ich, <strong>Monsieur Moustache</strong>, bin in den Urlaub gefahren.<br><br>
+    Aber denkt nicht, dass ihr einfach reinspazieren und <strong>MEINEN Käse</strong> fressen könnt!<br><br>
+    Ich habe den <strong>BESTEN Käse</strong> irgendwo versteckt. Die Karte habe ich zerrissen und die Stücke verteilt.<br><br>
+    Und überall habe ich <strong>Fallen</strong> aufgestellt!<br><br>
+    Viel Glück, ihr kleinen Fellknäuel! 😼<br>
+    <div class="signature">— Monsieur Moustache 🐾</div>
+  </div>
+  <div class="paw-emoji">🐾 🧀 🐾</div>
+</div>
+
+<!-- PAGE 2+: GAME PLAN -->
+<div class="page-break"></div>
+<h1>🐱 Schatzsuche: Die Katze ist weg! 🐭</h1>
+<p style="text-align:center;">7 Spieler · 6 Spiele · Alter 5–7</p>
+
+<!-- Käse-Legende (kompakt) -->
+<h2>Käse-Symbole — Legende</h2>
+<table style="font-size:10pt;">
+<tr>
+  <td style="width:40px;"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M5 25 L15 5 L25 25 Z" fill="#FFD700"/><circle cx="12" cy="18" r="2" fill="#FFF8DC"/><circle cx="18" cy="20" r="1.5" fill="#FFF8DC"/><circle cx="15" cy="14" r="1" fill="#FFF8DC"/></svg></td>
+  <td><strong>Emmentaler</strong> — Dreieck mit Löchern</td>
+  <td style="width:40px;"><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#FF8C00"/><ellipse cx="15" cy="15" rx="8" ry="4" fill="#FFA500" opacity="0.5"/></svg></td>
+  <td><strong>Gouda</strong> — Orange Kugel</td>
+</tr>
+<tr>
+  <td><svg width="30" height="30" viewBox="0 0 30 30"><path d="M3 20 Q15 8 27 20 Z" fill="#FFF5B0" stroke="#B8860B" stroke-width="1.5"/><path d="M3 20 L27 20 L27 25 L3 25 Z" fill="#F5E6A0" stroke="#B8860B" stroke-width="1.5"/></svg></td>
+  <td><strong>Brie</strong> — Weißes Dreieck</td>
+  <td><svg width="30" height="30" viewBox="0 0 30 30"><rect x="5" y="8" width="20" height="14" rx="2" fill="#FF6600"/><line x1="5" y1="15" x2="25" y2="15" stroke="#CC5500" stroke-width="1"/></svg></td>
+  <td><strong>Cheddar</strong> — Orange Block</td>
+</tr>
+<tr>
+  <td><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="#F0F0E0" stroke="#888" stroke-width="2"/><circle cx="15" cy="15" r="4" fill="#E8E8D8" stroke="#AAA" stroke-width="0.5"/></svg></td>
+  <td><strong>Mozzarella</strong> — Weiße Kugel</td>
+  <td><svg width="30" height="30" viewBox="0 0 30 30"><path d="M5 25 L8 8 L22 5 L25 22 Z" fill="#F0D890" stroke="#A0855C" stroke-width="1.5"/><path d="M10 12 L12 11" stroke="#A0855C" stroke-width="1"/></svg></td>
+  <td><strong>Parmesan</strong> — Heller Brocken</td>
+</tr>
+<tr>
+  <td><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="17" r="10" fill="#FFF5B0" stroke="#B8860B" stroke-width="2"/><circle cx="15" cy="17" r="10" fill="none" stroke="#D4A017" stroke-width="2.5"/><path d="M8 12 L22 12" stroke="#B8860B" stroke-width="1" stroke-dasharray="2"/></svg></td>
+  <td><strong>Camembert</strong> — Rund mit Rinde</td>
+  <td></td><td></td>
+</tr>
+</table>
+
+<h2>Spielablauf</h2>
+<div class="rules">
+<ul>
+<li>Gewinner wählt, wer das nächste Puzzleteil bekommt</li>
+<li>Empfänger klebt sein <strong>Käse-Symbol</strong> auf das Teil</li>
+<li>Letztes Teil geht an das letzte Kind ohne Teil</li>
+<li>Am Ende: alle Teile zusammensetzen → Schatz suchen!</li>
+</ul>
+</div>
+
+<div style="page-break-before: always;"></div>
+
+<div class="game-block" data-game="0">
+<h2>Spiel 0 — Katzen-Verkleidung bauen</h2>
+<div class="story">
+„Moment — die Fallen von Monsieur Moustache fangen nur MÄUSE! Wenn wir wie Katzen aussehen, lösen sie nicht aus! Schnell — baut eure Katzen-Verkleidung! Und dann beweist, dass ihr euch wie eine Katze bewegen könnt — tragt den Käseball ohne ihn fallen zu lassen!"
+</div>
+<div class="rules">
+<ul>
+<li>Basteln: Tischtennisschläger aus Becher + Karton, als Katzengesicht gestalten</li>
+<li>Spiel: Tischtennisball auf Schläger balancieren, um Pfosten herum und zurück</li>
+<li>Runterfallen = Neustart oder Zeitstrafe</li>
+<li>Schnellste Zeit gewinnt</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Zeit</th><th>Platz</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">→ Gewinner wählt Empfänger für Puzzleteil #1</p>
+</div>
+
+<div class="game-block" data-game="1">
+<h2>Spiel 1 — Rückwärts-Flucht</h2>
+<div class="story">
+„Wir sind am Eingang! Aber schaut — da ist ein Spiegel-Alarm. Er erkennt nur Mäuse die VORWÄRTS laufen. Wenn wir rückwärts gehen, sind wir unsichtbar! Wer ist die schnellste Rückwärts-Maus?"
+</div>
+<div class="rules">
+<ul>
+<li>Rückwärts laufen: Start → um Pfosten/Baum → zurück zum Start</li>
+<li>Schnellste Zeit gewinnt</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Zeit</th><th>Platz</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">→ Gewinner wählt Empfänger für Puzzleteil #2</p>
+</div>
+
+<div class="game-block" data-game="2">
+<h2>Spiel 2 — Der Katzen-Code</h2>
+<div class="story">
+„Wir sind drin! Aber die nächste Tür hat ein Zahlenschloss. Der Code ändert sich jedes Mal! Ratet die Geheimzahl — dann würfeln wir und schauen, wer den Code geknackt hat!"
+</div>
+<div class="rules">
+<ul>
+<li>Jeder Spieler rät eine Summe (3–18)</li>
+<li>3 Würfel werfen</li>
+<li>Nächster Tipp gewinnt (Gleichstand = nochmal würfeln)</li>
+<li>Mehrere Runden möglich</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Tipp</th><th>Differenz</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">Würfelergebnis: _______ → Gewinner wählt Empfänger für Puzzleteil #3</p>
+</div>
+
+<div class="game-block" data-game="3">
+<h2>Spiel 3 — Feuer-Falle</h2>
+<div class="story">
+„Oh nein — die Katze hat eine FEUER-FALLE in der Küche aufgestellt! Wir müssen die Flammen löschen, bevor die Kartenstücke verbrennen! Schnappt euch die Wasserpistolen — der beste Feuerwehrmann gewinnt!"
+</div>
+<div class="rules">
+<ul>
+<li>Je ein Schwamm pro Spieler, auf Wäscheleine in Brusthöhe</li>
+<li>Küchenwaage: vorher/nachher wiegen</li>
+<li>Gleiche Pistolen, gleich gefüllt</li>
+<li>Fester Abstand (Klebeband), 15 Sekunden Zeit</li>
+<li>Schwerster Schwamm gewinnt</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Vorher (g)</th><th>Nachher (g)</th><th>Differenz (g)</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">Größte Differenz gewinnt! → Gewinner wählt Empfänger für Puzzleteil #4</p>
+</div>
+
+<div class="game-block" data-game="4">
+<h2>Spiel 4 — Wachhund-Snack</h2>
+<div class="story">
+„Wir haben es in den Garten geschafft — aber der Wachhund versperrt den Weg! Er lässt uns nur durch, wenn wir ihm seinen Lieblingssnack bringen — aber er muss GENAU das richtige Gewicht haben. Mischt eure Zutaten sorgfältig!"
+</div>
+<div class="rules">
+<ul>
+<li>Matschküche am Spielplatz + Küchenwaage</li>
+<li>Zielgewicht ansagen (z.B. 500g)</li>
+<li>3 Zutaten schöpfen (Sand, Steine, Blätter etc.)</li>
+<li>Wiegen → nächster am Ziel gewinnt</li>
+<li>Kein Nachjustieren nach dem Aufstellen!</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Gewicht (g)</th><th>Differenz</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">Zielgewicht: _______ g → Gewinner wählt Empfänger für Puzzleteil #5</p>
+</div>
+
+<div class="game-block" data-game="5">
+<h2>Spiel 5 — Dach-Flucht</h2>
+<div class="story">
+„ALARM! Monsieur Moustache kommt früher aus dem Urlaub zurück! Wir müssen über die Dächer fliehen — JETZT! Über die Stangen, die Rutsche runter, um den Turm — RENNT! Die schnellste Maus flieht mit dem letzten Stück!"
+</div>
+<div class="rules">
+<ul>
+<li>Parcours: Rutsche runter → zu den Kletterstangen → rüber (oder drunter durch) → Pfosten berühren → Klettergerüst hoch → oben abklatschen</li>
+<li>Einzeln auf Zeit</li>
+<li>Kletterstangen-Bypass erlaubt (drunter durch) = kleine Zeitstrafe</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Zeit</th><th>Platz</th></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+<tr><td class="result-cell"></td><td class="result-cell"></td><td class="result-cell"></td></tr>
+</table>
+<p class="note">→ Gewinner wählt Empfänger für Puzzleteil #6. Letztes Teil geht an das Kind ohne Teil.</p>
+</div>
+
+<div class="game-block" data-game="finale">
+<h2>Finale — Puzzle & Schatzsuche</h2>
+<div class="story">
+„Wir haben es geschafft! Wir haben ALLE Teile! Schnell — setzt die Karte zusammen, bevor die Katze zurückkommt!"
+</div>
+<p>(Kinder setzen das Puzzle zusammen)</p>
+<div class="story">
+„DA! Da ist der Käse versteckt! Los geht's!"
+</div>
+<p>(Gemeinsam zum Ort rennen → jeder findet sein Käse-Symbol-Schatz)</p>
+</div>
+
+<div class="game-block" data-game="E1">
+<h2>E1 — Käseregal-Falle (Schläger-Fangen)</h2>
+<div class="story">
+„Eine Falle! Die Katze hat das Käseregal so präpariert, dass es einstürzt! Käsebälle fallen runter — fangt sie mit eurer Verkleidung auf, bevor sie den Boden berühren und den Alarm auslösen!"
+</div>
+<div class="rules">
+<ul>
+<li>Tischtennisbälle werden geworfen, mit Katzen-Schläger fangen</li>
+<li>Meiste Fänge in 10 Versuchen gewinnt</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Fänge</th><th>Platz</th></tr>
+</table>
+<p class="note">→ Gewinner wählt Empfänger für Puzzleteil</p>
+</div>
+
+<div class="game-block" data-game="E2">
+<h2>E2 — Klebe-Falle (Weitsprung)</h2>
+<div class="story">
+„Die Katze hat Kleber über den ganzen Flur geschüttet! Eure Füße kleben zusammen — springt so weit ihr könnt, um über die klebrige Zone zu kommen!"
+</div>
+<div class="rules">
+<ul>
+<li>Beidbeiniger Standweitsprung</li>
+<li>Weiteste Landung gewinnt</li>
+</ul>
+</div>
+<table>
+<tr><th>Spieler</th><th>Weite (cm)</th><th>Platz</th></tr>
+</table>
+<p class="note">→ Gewinner wählt Empfänger für Puzzleteil</p>
+</div>
+
+<div class="section-fallback">
+<h2>Material-Checkliste</h2>
+<table>
+<tr><th>✓</th><th>Material</th><th>Für</th></tr>
+<tr><td>☐</td><td>Brief + Stoffkatze im Koffer</td><td>Eröffnung</td></tr>
+<tr><td>☐</td><td>Mäuseohren (Haarreif + Filz) × 7</td><td>Kostüm</td></tr>
+<tr><td>☐</td><td>Becher + Karton + Stifte</td><td>Spiel 0</td></tr>
+<tr><td>☐</td><td>Tischtennisbälle</td><td>Spiel 0 / E1</td></tr>
+<tr><td>☐</td><td>Stoppuhr / Handy</td><td>Spiel 0, 1, 5</td></tr>
+<tr><td>☐</td><td>3 Würfel</td><td>Spiel 2</td></tr>
+<tr><td>☐</td><td>Wasserpistolen × 7 (gleich)</td><td>Spiel 3</td></tr>
+<tr><td>☐</td><td>Schwämme (groß) × 7</td><td>Spiel 3</td></tr>
+<tr><td>☐</td><td>Wäscheleine + Clips</td><td>Spiel 3</td></tr>
+<tr><td>☐</td><td>Küchenwaage</td><td>Spiel 3, 4</td></tr>
+<tr><td>☐</td><td>Behälter × 7 (Matschküche)</td><td>Spiel 4</td></tr>
+<tr><td>☐</td><td>Käse-Symbol-Sticker × 7</td><td>Puzzleteile</td></tr>
+<tr><td>☐</td><td>Puzzle (Luftbild, 7 Teile)</td><td>Finale</td></tr>
+<tr><td>☐</td><td>Schätze × 7 (käse-verpackt)</td><td>Schatzversteck</td></tr>
+<tr><td>☐</td><td>Maßband</td><td>E2</td></tr>
+</table>
+</div>
+
+<!-- EXTRA PAGE: KÄSE-STICKER ZUM AUSSCHNEIDEN -->
+<div class="page-break"></div>
+<div style="text-align:center; padding:10px;">
+<h1 style="font-family:'Comic Sans MS',cursive; color:#8B4513; font-size:14pt;">🧀 Käse-Symbole zum Ausschneiden (⌀ 2cm) 🧀</h1>
+
+<div style="display:grid; grid-template-columns: repeat(7, 22mm); gap:4mm; margin-top:15px; justify-content:center;">
+
+  <!-- Row 1 -->
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M3 18 L11 3 L19 18 Z" fill="#FFD700" stroke="#DAA520" stroke-width="0.5"/><circle cx="8" cy="14" r="1.3" fill="#FFF8DC"/><circle cx="13" cy="15" r="1" fill="#FFF8DC"/><circle cx="12" cy="10" r="0.8" fill="#FFF8DC"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="8" fill="#FF8C00" stroke="#CC7000" stroke-width="0.5"/><ellipse cx="11" cy="11" rx="5" ry="2" fill="#FFA500" opacity="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M4 15 Q11 5 18 15 Z" fill="#FFF5B0" stroke="#B8860B" stroke-width="1"/><path d="M4 15 L18 15 L18 17.5 L4 17.5 Z" fill="#F5E6A0" stroke="#B8860B" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><rect x="4" y="6" width="14" height="10" rx="1" fill="#FF6600" stroke="#CC5500" stroke-width="0.5"/><line x1="4" y1="11" x2="18" y2="11" stroke="#CC5500" stroke-width="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7" fill="#F0F0E0" stroke="#888" stroke-width="1.2"/><ellipse cx="9" cy="9" rx="2" ry="1.5" fill="#E8E8D8" opacity="0.8"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M5 17 L6 5 L16 4 L18 16 Z" fill="#F0D890" stroke="#A0855C" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7.5" fill="#FFF5B0" stroke="#B8860B" stroke-width="1.5"/><circle cx="11" cy="11" r="5" fill="#F5E6A0" opacity="0.6"/></svg>
+
+  <!-- Row 2 (identical) -->
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M3 18 L11 3 L19 18 Z" fill="#FFD700" stroke="#DAA520" stroke-width="0.5"/><circle cx="8" cy="14" r="1.3" fill="#FFF8DC"/><circle cx="13" cy="15" r="1" fill="#FFF8DC"/><circle cx="12" cy="10" r="0.8" fill="#FFF8DC"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="8" fill="#FF8C00" stroke="#CC7000" stroke-width="0.5"/><ellipse cx="11" cy="11" rx="5" ry="2" fill="#FFA500" opacity="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M4 15 Q11 5 18 15 Z" fill="#FFF5B0" stroke="#B8860B" stroke-width="1"/><path d="M4 15 L18 15 L18 17.5 L4 17.5 Z" fill="#F5E6A0" stroke="#B8860B" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><rect x="4" y="6" width="14" height="10" rx="1" fill="#FF6600" stroke="#CC5500" stroke-width="0.5"/><line x1="4" y1="11" x2="18" y2="11" stroke="#CC5500" stroke-width="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7" fill="#F0F0E0" stroke="#888" stroke-width="1.2"/><ellipse cx="9" cy="9" rx="2" ry="1.5" fill="#E8E8D8" opacity="0.8"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M5 17 L6 5 L16 4 L18 16 Z" fill="#F0D890" stroke="#A0855C" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7.5" fill="#FFF5B0" stroke="#B8860B" stroke-width="1.5"/><circle cx="11" cy="11" r="5" fill="#F5E6A0" opacity="0.6"/></svg>
+
+  <!-- Row 3 (identical) -->
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M3 18 L11 3 L19 18 Z" fill="#FFD700" stroke="#DAA520" stroke-width="0.5"/><circle cx="8" cy="14" r="1.3" fill="#FFF8DC"/><circle cx="13" cy="15" r="1" fill="#FFF8DC"/><circle cx="12" cy="10" r="0.8" fill="#FFF8DC"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="8" fill="#FF8C00" stroke="#CC7000" stroke-width="0.5"/><ellipse cx="11" cy="11" rx="5" ry="2" fill="#FFA500" opacity="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M4 15 Q11 5 18 15 Z" fill="#FFF5B0" stroke="#B8860B" stroke-width="1"/><path d="M4 15 L18 15 L18 17.5 L4 17.5 Z" fill="#F5E6A0" stroke="#B8860B" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><rect x="4" y="6" width="14" height="10" rx="1" fill="#FF6600" stroke="#CC5500" stroke-width="0.5"/><line x1="4" y1="11" x2="18" y2="11" stroke="#CC5500" stroke-width="0.4"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7" fill="#F0F0E0" stroke="#888" stroke-width="1.2"/><ellipse cx="9" cy="9" rx="2" ry="1.5" fill="#E8E8D8" opacity="0.8"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><path d="M5 17 L6 5 L16 4 L18 16 Z" fill="#F0D890" stroke="#A0855C" stroke-width="1"/></svg>
+  <svg width="22mm" height="22mm" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10.5" fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="1,0.5"/><circle cx="11" cy="11" r="7.5" fill="#FFF5B0" stroke="#B8860B" stroke-width="1.5"/><circle cx="11" cy="11" r="5" fill="#F5E6A0" opacity="0.6"/></svg>
+
+</div>
+
+<!-- Legend below -->
+<p style="font-size:9pt; color:#666; margin-top:15px;">
+  Emmentaler · Gouda · Brie · Cheddar · Mozzarella · Parmesan · Camembert
+</p>
+</div>
+
+<script>
+const DEFAULT_PLAYERS = 7;
+const GAMES = [
+  { id: '0', label: 'Spiel 0 — Verkleidung' },
+  { id: '1', label: 'Spiel 1 — Rückwärts' },
+  { id: '2', label: 'Spiel 2 — Katzen-Code' },
+  { id: '3', label: 'Spiel 3 — Feuer-Falle' },
+  { id: '4', label: 'Spiel 4 — Wachhund' },
+  { id: '5', label: 'Spiel 5 — Dach-Flucht' },
+  { id: 'E1', label: 'E1 — Schläger-Fangen' },
+  { id: 'E2', label: 'E2 — Weitsprung' },
+];
+let selectedGames = new Set(['0','1','2','3','4','5']);
+
+function getRequiredGames() {
+  const n = parseInt(document.getElementById('playerCount').value) || DEFAULT_PLAYERS;
+  return n - 1;
+}
+
+function buildGameSelector() {
+  const container = document.getElementById('gameSelector');
+  container.innerHTML = '';
+  GAMES.forEach(g => {
+    const btn = document.createElement('div');
+    btn.className = 'game-selector-label' + (selectedGames.has(g.id) ? ' selected' : '');
+    btn.textContent = g.label;
+    btn.setAttribute('data-gid', g.id);
+    btn.onclick = () => toggleGame(g.id);
+    container.appendChild(btn);
+  });
+  updateGameCountDisplay();
+}
+
+function toggleGame(id) {
+  const required = getRequiredGames();
+  if (selectedGames.has(id)) {
+    // Deselect — but don't go below 1 (allow any count, user sees counter)
+    selectedGames.delete(id);
+  } else {
+    // Select — but don't exceed required
+    if (selectedGames.size >= required) return;
+    selectedGames.add(id);
+  }
+  refreshGameVisuals();
+}
+
+function refreshGameVisuals() {
+  // Update selector buttons
+  document.querySelectorAll('#gameSelector .game-selector-label').forEach(btn => {
+    const gid = btn.getAttribute('data-gid');
+    btn.className = 'game-selector-label' + (selectedGames.has(gid) ? ' selected' : '');
+  });
+  // Show/hide game blocks
+  document.querySelectorAll('.game-block[data-game]').forEach(block => {
+    const gid = block.getAttribute('data-game');
+    if (gid === 'finale') return;
+    block.classList.toggle('game-hidden', !selectedGames.has(gid));
+  });
+  updateGameCountDisplay();
+}
+
+function updateGameCountDisplay() {
+  const required = getRequiredGames();
+  document.getElementById('selectedCount').textContent = selectedGames.size;
+  document.getElementById('requiredCount').textContent = required;
+  document.getElementById('gameCountInfo').textContent = `(${required} Spiele für ${required + 1} Spieler)`;
+}
+
+function updatePlayerCount(n) {
+  n = Math.max(2, Math.min(9, parseInt(n) || DEFAULT_PLAYERS));
+  document.getElementById('playerCount').value = n;
+  const required = n - 1;
+
+  // Adjust selected games to match required count
+  while (selectedGames.size > required) {
+    const arr = Array.from(selectedGames);
+    selectedGames.delete(arr[arr.length - 1]);
+  }
+  const allIds = GAMES.map(g => g.id);
+  for (const id of allIds) {
+    if (selectedGames.size >= required) break;
+    if (!selectedGames.has(id)) selectedGames.add(id);
+  }
+
+  // Update name inputs
+  const container = document.getElementById('nameInputs');
+  const existing = container.querySelectorAll('.name-input');
+  const names = Array.from(existing).map(inp => inp.value);
+  container.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.className = 'name-input';
+    inp.placeholder = `Spieler ${i + 1}`;
+    if (names[i]) inp.value = names[i];
+    container.appendChild(inp);
+  }
+
+  // Update all game tables
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    const header = table.querySelector('tr');
+    if (!header) return;
+    const colCount = header.querySelectorAll('th').length;
+    if (colCount === 0) return;
+    const rows = table.querySelectorAll('tr');
+    for (let i = rows.length - 1; i > 0; i--) rows[i].remove();
+    for (let i = 0; i < n; i++) {
+      const tr = document.createElement('tr');
+      for (let c = 0; c < colCount; c++) {
+        const td = document.createElement('td');
+        td.className = 'result-cell';
+        td.setAttribute('contenteditable', 'true');
+        td.style.cursor = 'text';
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+  });
+
+  buildGameSelector();
+  refreshGameVisuals();
+}
+
+function applyNames() {
+  const inputs = document.querySelectorAll('.name-input');
+  const names = Array.from(inputs).map((inp, i) => inp.value.trim() || `Spieler ${i + 1}`);
+
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    const rows = table.querySelectorAll('tr');
+    rows.forEach((row, i) => {
+      if (i === 0) return;
+      const firstCell = row.querySelector('td.result-cell');
+      if (firstCell && (i - 1) < names.length) {
+        firstCell.textContent = names[i - 1];
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlayerCount(DEFAULT_PLAYERS);
+});
+</script>
+}
+
+function applyNames() {
+  const inputs = document.querySelectorAll('.name-input');
+  const names = Array.from(inputs).map((inp, i) => inp.value.trim() || `Spieler ${i + 1}`);
+
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    const rows = table.querySelectorAll('tr');
+    rows.forEach((row, i) => {
+      if (i === 0) return;
+      const firstCell = row.querySelector('td.result-cell');
+      if (firstCell && (i - 1) < names.length) {
+        firstCell.textContent = names[i - 1];
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlayerCount(DEFAULT_PLAYERS);
+});
+</script>
+
+</body>
+</html>
