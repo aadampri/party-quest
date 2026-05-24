@@ -90,7 +90,7 @@ Die **Kernschleife** ist: Spiel → Gewinner → Gewinner wählt Empfänger → 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                 BINDUNG BEIM EMPFANG                         │
+│                 BINDUNG BEIM EMPFANG                        │
 │                                                             │
 │  1. Kind erhält blankes Puzzleteil                          │
 │  2. Kind markiert es mit persönlichem Symbol (Sticker/Malen)│
@@ -99,11 +99,11 @@ Die **Kernschleife** ist: Spiel → Gewinner → Gewinner wählt Empfänger → 
 │                                                             │
 │  Symbolzuweisung: bei Party-Start (aus Set wählen)          │
 │  Schatz-Vorbereitung: N gleiche Schätze, am Ende beschriften│
-│                       ODER vorab beschriften und zuordnen    │
+│                       ODER vorab beschriften und zuordnen   │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                 VOR-GEBUNDENE TOKENS                         │
+│                 VOR-GEBUNDENE TOKENS                        │
 │                                                             │
 │  1. Vor der Party: jedes Puzzleteil mit Symbol markieren    │
 │  2. Vor der Party: jeden Schatz mit passendem Symbol        │
@@ -116,7 +116,7 @@ Die **Kernschleife** ist: Spiel → Gewinner → Gewinner wählt Empfänger → 
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                 POSITIONELL                                  │
+│                 POSITIONELL                                 │
 │                                                             │
 │  1. Zusammengesetzte Teile ergeben Karte/Bild               │
 │  2. Karte enthüllt EINEN gemeinsamen Ort                    │

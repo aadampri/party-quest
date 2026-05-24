@@ -89,7 +89,7 @@ The **core loop** is: Game → Winner → Winner picks Recipient → Recipient c
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    BIND-ON-RECEIVE                           │
+│                    BIND-ON-RECEIVE                          │
 │                                                             │
 │  1. Child receives blank puzzle piece                       │
 │  2. Child marks it with their personal symbol (sticker/draw)│
@@ -98,11 +98,11 @@ The **core loop** is: Game → Winner → Winner picks Recipient → Recipient c
 │                                                             │
 │  Symbol assignment: done at party start (pick from set)     │
 │  Treasure prep: wrap N identical treasures, label at end    │
-│                  OR pre-label and match during assembly      │
+│                  OR pre-label and match during assembly     │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                    PRE-BOUND TOKENS                          │
+│                    PRE-BOUND TOKENS                         │
 │                                                             │
 │  1. Before party: mark each puzzle piece with a symbol      │
 │  2. Before party: mark each treasure with matching symbol   │
@@ -115,7 +115,7 @@ The **core loop** is: Game → Winner → Winner picks Recipient → Recipient c
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                    POSITIONAL                                │
+│                    POSITIONAL                               │
 │                                                             │
 │  1. Assembled pieces form a map/image                       │
 │  2. Map reveals ONE shared location                         │

@@ -43,37 +43,37 @@ La **boucle principale** est : Jeu → Gagnant → Gagnant choisit Destinataire 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│              LIAISON À LA RÉCEPTION                          │
+│              LIAISON À LA RÉCEPTION                         │
 │                                                             │
-│  1. L'enfant reçoit une pièce de puzzle vierge             │
+│  1. L'enfant reçoit une pièce de puzzle vierge              │
 │  2. L'enfant la marque avec son symbole (autocollant/dessin)│
-│  3. À la finale : le puzzle assemblé révèle l'emplacement  │
-│  4. Chaque enfant trouve le trésor marqué de son symbole   │
+│  3. À la finale : le puzzle assemblé révèle l'emplacement   │
+│  4. Chaque enfant trouve le trésor marqué de son symbole    │
 │                                                             │
 │  Attribution des symboles : au début de la fête (choisir)   │
-│  Préparation trésor : N trésors identiques, étiqueter à la │
+│  Préparation trésor : N trésors identiques, étiqueter à la  │
 │                        fin OU pré-étiqueter et associer     │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
 │              JETONS PRÉ-LIÉS                                │
 │                                                             │
-│  1. Avant la fête : marquer chaque pièce avec un symbole   │
-│  2. Avant la fête : marquer chaque trésor avec le symbole  │
-│  3. Le destinataire reçoit une pièce au hasard (symbole =  │
+│  1. Avant la fête : marquer chaque pièce avec un symbole    │
+│  2. Avant la fête : marquer chaque trésor avec le symbole   │
+│  3. Le destinataire reçoit une pièce au hasard (symbole =   │
 │     destin)                                                 │
-│  4. À la finale : l'enfant associe le symbole de sa pièce  │
-│     à un trésor — « quel trésor est le TIEN ? »            │
+│  4. À la finale : l'enfant associe le symbole de sa pièce   │
+│     à un trésor — « quel trésor est le TIEN ? »             │
 │                                                             │
-│  Pro : Zéro effort pendant la fête, surprise               │
-│  Contra : Préparer N trésors distincts à l'avance          │
+│  Pro : Zéro effort pendant la fête, surprise                │
+│  Contra : Préparer N trésors distincts à l'avance           │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│              POSITIONNEL                                     │
+│              POSITIONNEL                                    │
 │                                                             │
 │  1. Les pièces assemblées forment une carte/image           │
-│  2. La carte révèle UN emplacement commun                  │
+│  2. La carte révèle UN emplacement commun                   │
 │  3. Le groupe y va ensemble pour trouver TOUS les trésors   │
 │  4. Liaison individuelle via étiquettes ou autocollants     │
 │     sur chaque trésor à l'emplacement                       │
