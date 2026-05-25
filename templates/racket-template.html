@@ -82,19 +82,23 @@
   <!-- Figure centered horizontally, moved up -->
   <g id="racketGroup" transform="translate(95, 118)">
     
-    <!-- RACKET OUTLINE (cat head shape + handle as ONE PIECE for stability) -->
-    <!-- Main face: oval ~75mm wide, ~90mm tall (elongated in pointing direction) -->
+    <!-- RACKET OUTLINE (cat head shape + handle as ONE continuous curve) -->
+    <!-- No straight segments: entire silhouette is smooth bezier curves. -->
+    <!-- 2 cubics per side: -->
+    <!-- 1) Head taper ends at convex gusset DIRECTLY at racket-handle interface (y≈80) -->
+    <!--    Gusset bulges to ~38mm — wider than the head's lower edge at that point -->
+    <!-- 2) Smooth taper from gusset peak down to grip (18mm), asymptotic narrowing -->
     <path d="M-75,0 
              C-75,-55 -50,-90 0,-90
              C50,-90 75,-55 75,0
-             C75,45 55,80 17.5,80
-             L17.5,150
-             C17.5,155 -17.5,155 -17.5,150
-             L-17.5,80
-             C-55,80 -75,45 -75,0 Z" 
+             C75,45 55,72 38,80
+             C28,85 18,140 18,165
+             C18,170 -18,170 -18,165
+             C-18,140 -28,85 -38,80
+             C-55,72 -75,45 -75,0 Z" 
           fill="none" stroke="#333" stroke-width="0.8"/>
     <!-- Label: one piece -->
-    <text id="txtOnePiece" x="45" y="90" font-size="4.5" fill="#666" transform="rotate(15,45,90)">← alles aus einem Stück!</text>
+    <text id="txtOnePiece" x="42" y="108" font-size="4.5" fill="#666" transform="rotate(20,42,108)">← alles aus einem Stück!</text>
     
     <!-- LEFT EAR -->
     <path d="M-55,-65 L-38,-110 L-20,-70" 
@@ -116,13 +120,13 @@
     <text id="cupLabel" x="0" y="5" text-anchor="middle" dominant-baseline="middle" font-size="6" fill="#d00">⌀ 7.6 cm</text>
     <text id="txtCutHere" x="0" y="14" text-anchor="middle" dominant-baseline="middle" font-size="4" fill="#d00">(hier ausschneiden)</text>
     
-    <!-- HANDLE is part of the outline — grip zone marked here -->
-    <text id="txtGrip" x="0" y="110" text-anchor="middle" font-size="5" fill="#666">Griff</text>
-    <text x="0" y="117" text-anchor="middle" font-size="4" fill="#999">3.5 × 10 cm</text>
-    <!-- Grip zone marker -->
-    <rect x="-17.5" y="90" width="35" height="55" rx="5"
+    <!-- HANDLE is part of the continuous curve — grip zone is the narrow tail -->
+    <text id="txtGrip" x="0" y="140" text-anchor="middle" font-size="5" fill="#666">Griff</text>
+    <text x="0" y="147" text-anchor="middle" font-size="4" fill="#999">3.6 × 2.5 cm</text>
+    <!-- Grip zone marker (narrowest region of the continuous curve) -->
+    <rect x="-18" y="140" width="36" height="25" rx="5"
           fill="none" stroke="#999" stroke-width="0.3" stroke-dasharray="2,2"/>
-    <text id="txtGripZone" x="0" y="130" text-anchor="middle" font-size="3.5" fill="#999">← Griffzone →</text>
+    <text id="txtGripZone" x="0" y="155" text-anchor="middle" font-size="3.5" fill="#999">← Griffzone →</text>
     
     <!-- Cat face decorations (optional — draw on or skip) -->
     <!-- Eyes (above the cup hole) -->
@@ -292,7 +296,7 @@ const T = LANG[PAGE_LANG] || LANG.de;
 const BASE_NOSE_RADIUS = 38; // mm (7.6cm diameter)
 const BASE_HEAD_W = 150; // mm (15cm wide)
 const BASE_HEAD_H = 180; // mm (18cm tall, face only)
-const BASE_TOTAL_H = 265; // mm (ear tips to handle bottom)
+const BASE_TOTAL_H = 280; // mm (ear tips at -110 to bottom curve at +170)
 
 function updateTemplate() {
   const totalPct = parseInt(document.getElementById('totalScale').value);
@@ -317,10 +321,10 @@ function updateTemplate() {
   svg.setAttribute('viewBox', '0 0 190 277');
   
   // Center the scaled figure on the page
-  // Figure spans from -110 to +155 in local coords (265mm total)
-  // After scale: total height = 265 * totalFactor
-  // Center vertically: translateY = (277 - 265*totalFactor)/2 + 110*totalFactor
-  const figH = 265 * totalFactor;
+  // Figure spans from -110 to +170 in local coords (280mm total)
+  // After scale: total height = 280 * totalFactor
+  // Center vertically: translateY = (277 - 280*totalFactor)/2 + 110*totalFactor
+  const figH = 280 * totalFactor;
   const ty = (277 - figH) / 2 + 110 * totalFactor;
   document.getElementById('racketGroup').setAttribute('transform', 
     `translate(95, ${ty.toFixed(1)}) scale(${totalFactor})`);
@@ -343,7 +347,7 @@ function updateTemplate() {
   const dimSide = document.getElementById('dimSide');
 
   // Figure bottom edge
-  const figBot = ty + 155 * totalFactor;
+  const figBot = ty + 170 * totalFactor;
   // Place legend just below figure bottom, or at y=260 if figure is short
   const legendY = Math.min(Math.max(figBot + 8, 260), 269);
 
