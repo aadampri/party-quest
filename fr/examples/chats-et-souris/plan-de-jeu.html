@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Chasse au trésor : Le chat est parti !</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+  h1 { text-align: center; font-size: 18pt; margin-bottom: 5px; }
+  h2 { font-size: 13pt; border-bottom: 2px solid #333; padding-bottom: 3px; margin-top: 20px; }
+  h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 12px; }
+  .story {
+    background: #f9f5e8;
+    border-left: 4px solid #d4a017;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-style: italic;
+  }
+  .rules {
+    background: #f0f4f8;
+    border-left: 4px solid #4a90d9;
+    padding: 8px 12px;
+    margin: 8px 0;
+  }
+  .rules ul { margin: 4px 0; padding-left: 20px; }
+  .rules li { margin: 2px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  th { background: #e8e8e8; }
+  .result-cell { min-width: 60px; height: 24px; }
+  .note { font-size: 9pt; color: #555; margin-top: 4px; }
+  .game-block { page-break-inside: avoid; margin-bottom: 10px; }
+  .section-fallback { border-top: 2px dashed #999; margin-top: 20px; padding-top: 10px; }
+  .ui-panel {
+    background: #fffbe6;
+    border: 2px solid #d4a017;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .ui-panel h3 { margin: 0 0 10px 0; font-size: 12pt; }
+  .ui-panel input {
+    width: 120px;
+    padding: 4px 8px;
+    margin: 3px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 10pt;
+  }
+  .ui-panel button {
+    padding: 6px 14px;
+    margin: 5px 3px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10pt;
+  }
+  .btn-apply { background: #4a90d9; color: white; }
+  .btn-apply:hover { background: #357abd; }
+  .btn-print { background: #5cb85c; color: white; }
+  .btn-print:hover { background: #449d44; }
+  .game-block.game-hidden { opacity: 0.3; }
+  .game-selector-label { font-size: 9pt; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; text-align: center; }
+  .game-selector-label.selected { background: #d4edda; border-color: #28a745; }
+  .letter-page {
+    page-break-after: always;
+    height: 257mm;
+    max-height: 257mm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #fffaf0;
+    position: relative;
+  }
+  .letter-page::before {
+    content: '';
+    position: absolute;
+    top: 20px; right: 20px; bottom: 20px; left: 20px;
+    border: 3px dashed #d4a017;
+    border-radius: 15px;
+    pointer-events: none;
+  }
+  .letter-content {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 18pt;
+    line-height: 1.8;
+    max-width: 600px;
+    color: #3a2a0a;
+    padding: 30px;
+  }
+  .letter-content .signature { font-size: 22pt; font-weight: bold; margin-top: 20px; }
+  .letter-content .greeting { font-size: 16pt; margin-bottom: 20px; }
+  .letter-title {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 28pt;
+    color: #8B4513;
+    margin-bottom: 20px;
+  }
+  .paw-emoji { font-size: 40pt; margin: 10px; }
+  .sticker-grid { display: grid; grid-template-columns: repeat(7, 22mm); gap: 4mm; margin-top: 15px; justify-content: center; }
+  .sticker {
+    width: 22mm;
+    height: 22mm;
+    border: 1px dashed #999;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7pt;
+    font-weight: bold;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .swiss { background: #ffd700; clip-path: polygon(50% 10%, 90% 82%, 10% 82%); border-radius: 0; }
+  .gouda { background: #ff8c00; }
+  .brie { background: #fff5b0; border-color: #b8860b; }
+  .cheddar { background: #ff6600; border-radius: 3mm; }
+  .mozzarella { background: #f0f0e0; border-color: #888; }
+  .parmesan { background: #f0d890; clip-path: polygon(25% 20%, 78% 12%, 88% 76%, 18% 86%); border-radius: 0; }
+  .camembert { background: #fff5b0; border: 2px solid #b8860b; }
+  @media print {
+    body { padding: 5mm; margin: 0; }
+    .ui-panel { display: none !important; }
+    .game-block.game-hidden { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    table { border: 2px solid #000 !important; border-collapse: collapse !important; page-break-inside: avoid; }
+    th, td { border: 1px solid #000 !important; padding: 6px 8px !important; }
+    th { background: #e8e8e8 !important; }
+    .result-cell { height: 28px !important; }
+    .game-block { break-inside: avoid; page-break-inside: avoid; }
+    .page-break { page-break-before: always; }
+    .letter-page { height: 257mm; min-height: auto; padding: 20px; box-sizing: border-box; }
+    h2, .story, .rules { page-break-after: avoid; }
+    .section-fallback { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ui-panel" id="uiPanel">
+  <h3>Entrer les noms des joueurs :</h3>
+  <div style="margin-bottom:8px;">
+    <label>Nombre de joueurs : <input type="number" id="playerCount" min="2" max="9" value="7" style="width:50px;" onchange="updatePlayerCount(this.value)"></label>
+    <span id="gameCountInfo" style="margin-left:10px; font-size:9pt; color:#555;"></span>
+  </div>
+  <div id="nameInputs"></div>
+  <div style="margin-top:12px;">
+    <strong>Choisir les jeux</strong> (<span id="selectedCount">0</span>/<span id="requiredCount">0</span> nécessaires) :
+    <div id="gameSelector" style="margin-top:5px; display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;"></div>
+  </div>
+  <div style="margin-top:10px;">
+    <button class="btn-apply" onclick="applyNames()">Appliquer les noms</button>
+    <button class="btn-print" onclick="window.print()">Imprimer / PDF</button>
+  </div>
+</div>
+
+<div class="letter-page">
+  <div class="paw-emoji">🐾</div>
+  <div class="letter-title">Une lettre de Monsieur Moustache</div>
+  <div class="letter-content">
+    <div class="greeting">Chères souris,</div>
+    Moi, <strong>Monsieur Moustache</strong>, je suis parti en vacances.<br><br>
+    Mais ne pensez pas pouvoir entrer tranquillement et manger <strong>MON fromage</strong> !<br><br>
+    J'ai caché le <strong>MEILLEUR fromage</strong> dans un endroit secret. J'ai déchiré la carte et dispersé les morceaux.<br><br>
+    Et partout, j'ai installé des <strong>pièges</strong> !<br><br>
+    Bonne chance, petites boules de poils !<br>
+    <div class="signature">- Monsieur Moustache</div>
+  </div>
+  <div class="paw-emoji">🐾 🧀 🐾</div>
+</div>
+
+<div class="page-break"></div>
+<h1>Chasse au trésor : Le chat est parti !</h1>
+<p style="text-align:center;">7 joueurs · 6 jeux · 5-7 ans</p>
+
+<h2>Symboles de fromage - Légende</h2>
+<table>
+<tr><th>Symbole</th><th>Fromage</th><th>Utilisation</th></tr>
+<tr><td><span class="sticker swiss">Gruyère</span></td><td><strong>Gruyère</strong> - triangle avec trous</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker gouda">Gouda</span></td><td><strong>Gouda</strong> - fromage rond orange</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker brie">Brie</span></td><td><strong>Brie</strong> - triangle clair</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker cheddar">Cheddar</span></td><td><strong>Cheddar</strong> - bloc orange</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker mozzarella">Mozzarella</span></td><td><strong>Mozzarella</strong> - boule blanche</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker parmesan">Parmesan</span></td><td><strong>Parmesan</strong> - morceau clair</td><td>Autocollant pour puzzle et trésor</td></tr>
+<tr><td><span class="sticker camembert">Camembert</span></td><td><strong>Camembert</strong> - rond avec croûte</td><td>Autocollant pour puzzle et trésor</td></tr>
+</table>
+
+<h2>Déroulement</h2>
+<div class="rules">
+<ul>
+<li>Le gagnant choisit qui reçoit la prochaine pièce de puzzle.</li>
+<li>Le destinataire colle son <strong>symbole de fromage</strong> sur la pièce.</li>
+<li>La dernière pièce revient au dernier enfant sans pièce.</li>
+<li>À la fin, assemblez toutes les pièces et cherchez le trésor ensemble.</li>
+</ul>
+</div>
+
+<div style="page-break-before: always;"></div>
+
+<div class="game-block" data-game="0">
+<h2>Jeu 0 - Construire un déguisement de chat</h2>
+<div class="story">« Attendez - les pièges de Monsieur Moustache n'attrapent que les SOURIS ! Si nous ressemblons à des chats, ils ne se déclencheront pas. Vite, construisez votre déguisement de chat, puis prouvez que vous pouvez bouger comme un chat en transportant la boule de fromage sans la faire tomber ! »</div>
+<div class="rules"><ul>
+<li>Bricolage : fabriquer une raquette de ping-pong avec un gobelet et du carton, décorée en tête de chat.</li>
+<li>Jeu : équilibrer une balle de ping-pong sur la raquette, faire le tour d'un poteau, puis revenir.</li>
+<li>Balle tombée = recommencer ou pénalité de temps.</li>
+<li>Le temps le plus rapide gagne.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Temps</th><th>Place</th></tr></table>
+<p class="note">Le gagnant choisit le destinataire de la pièce de puzzle n°1.</p>
+</div>
+
+<div class="game-block" data-game="1">
+<h2>Jeu 1 - Fuite à reculons</h2>
+<div class="story">« Nous sommes à l'entrée ! Mais regardez - une alarme miroir. Elle repère seulement les souris qui marchent EN AVANT. Si nous allons à reculons, nous sommes invisibles. Qui est la souris à reculons la plus rapide ? »</div>
+<div class="rules"><ul>
+<li>Marcher à reculons du départ, autour d'un poteau ou d'un arbre, puis retour au départ.</li>
+<li>Le temps le plus rapide gagne.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Temps</th><th>Place</th></tr></table>
+<p class="note">Le gagnant choisit le destinataire de la pièce de puzzle n°2.</p>
+</div>
+
+<div class="game-block" data-game="2">
+<h2>Jeu 2 - Le code du chat</h2>
+<div class="story">« Nous sommes dedans ! Mais la prochaine porte a un cadenas à chiffres. Le code change à chaque fois. Devinez le nombre secret, puis lançons les dés pour voir qui l'a trouvé ! »</div>
+<div class="rules"><ul>
+<li>Chaque joueur devine une somme de 3 à 18.</li>
+<li>Lancer 3 dés.</li>
+<li>La proposition la plus proche gagne ; en cas d'égalité, relancer.</li>
+<li>Plusieurs manches possibles.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Pronostic</th><th>Écart</th></tr></table>
+<p class="note">Résultat des dés : _______ - le gagnant choisit le destinataire de la pièce de puzzle n°3.</p>
+</div>
+
+<div class="game-block" data-game="3">
+<h2>Jeu 3 - Piège de feu</h2>
+<div class="story">« Oh non - le chat a installé un PIÈGE DE FEU dans la cuisine ! Nous devons éteindre les flammes avant que les morceaux de carte brûlent. Attrapez les pistolets à eau - le meilleur pompier gagne ! »</div>
+<div class="rules"><ul>
+<li>Suspendre une éponge par joueur sur une corde à linge à hauteur de poitrine.</li>
+<li>Peser chaque éponge avant et après avec une balance de cuisine.</li>
+<li>Utiliser des pistolets à eau identiques, remplis de la même façon.</li>
+<li>Distance fixe, 15 secondes.</li>
+<li>L'éponge la plus lourde après le tir gagne.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Avant (g)</th><th>Après (g)</th><th>Écart (g)</th></tr></table>
+<p class="note">Le plus grand écart gagne et choisit le destinataire de la pièce de puzzle n°4.</p>
+</div>
+
+<div class="game-block" data-game="4">
+<h2>Jeu 4 - Snack du chien de garde</h2>
+<div class="story">« Nous sommes arrivés dans le jardin - mais le chien de garde bloque le passage ! Il nous laissera passer seulement si nous lui apportons son snack préféré au poids exact. Mélangez vos ingrédients avec soin ! »</div>
+<div class="rules"><ul>
+<li>Utiliser une cuisine de boue ou une zone de mélange dehors, avec une balance de cuisine.</li>
+<li>Annoncer un poids cible, par exemple 500 g.</li>
+<li>Chaque joueur prend 3 ingrédients : sable, cailloux, feuilles, etc.</li>
+<li>Peser le bol ; le plus proche du poids cible gagne.</li>
+<li>Pas d'ajustement après avoir posé le bol sur la balance.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Poids (g)</th><th>Écart</th></tr></table>
+<p class="note">Poids cible : _______ g - le gagnant choisit le destinataire de la pièce de puzzle n°5.</p>
+</div>
+
+<div class="game-block" data-game="5">
+<h2>Jeu 5 - Fuite par les toits</h2>
+<div class="story">« ALARME ! Monsieur Moustache rentre plus tôt que prévu ! Nous devons nous échapper par les toits MAINTENANT. Par-dessus les barres, en bas du toboggan, autour de la tour - COUREZ ! La souris la plus rapide s'échappe avec le dernier morceau ! »</div>
+<div class="rules"><ul>
+<li>Parcours : descendre le toboggan, aller aux barres d'escalade, passer dessus ou dessous, toucher le poteau, grimper, puis taper le repère en haut.</li>
+<li>Un joueur à la fois, chronométré.</li>
+<li>Contourner les barres difficiles est permis avec une petite pénalité de temps.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Temps</th><th>Place</th></tr></table>
+<p class="note">Le gagnant choisit le destinataire de la pièce de puzzle n°6. La dernière pièce revient à l'enfant sans pièce.</p>
+</div>
+
+<div class="game-block" data-game="finale">
+<h2>Finale - Puzzle et chasse au trésor</h2>
+<div class="story">« Nous avons réussi ! Nous avons TOUS les morceaux. Vite, assemblez la carte avant que le chat revienne ! »</div>
+<p>Les enfants assemblent le puzzle.</p>
+<div class="story">« Là ! C'est là que le fromage est caché. Allons-y ! »</div>
+<p>Tout le monde court ensemble vers l'endroit. Chaque enfant trouve le trésor marqué avec son symbole de fromage.</p>
+</div>
+
+<div class="game-block" data-game="E1">
+<h2>E1 - Piège de l'étagère à fromage</h2>
+<div class="story">« Un piège ! Le chat a saboté l'étagère à fromage pour qu'elle s'effondre. Des boules de fromage tombent - attrapez-les avec votre déguisement avant qu'elles touchent le sol et déclenchent l'alarme ! »</div>
+<div class="rules"><ul>
+<li>Lancer des balles de ping-pong et les attraper avec la raquette de chat.</li>
+<li>Le plus grand nombre de prises en 10 essais gagne.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Prises</th><th>Place</th></tr></table>
+<p class="note">Le gagnant choisit le destinataire d'une pièce de puzzle.</p>
+</div>
+
+<div class="game-block" data-game="E2">
+<h2>E2 - Piège collant</h2>
+<div class="story">« Le chat a renversé de la colle partout dans le couloir ! Vos pieds sont collés ensemble. Sautez le plus loin possible pour traverser la zone collante ! »</div>
+<div class="rules"><ul>
+<li>Saut en longueur sans élan, les deux pieds ensemble.</li>
+<li>Le saut le plus long gagne.</li>
+</ul></div>
+<table><tr><th>Joueur</th><th>Distance (cm)</th><th>Place</th></tr></table>
+<p class="note">Le gagnant choisit le destinataire d'une pièce de puzzle.</p>
+</div>
+
+<div class="section-fallback">
+<h2>Liste du matériel</h2>
+<table>
+<tr><th>Fait</th><th>Matériel</th><th>Pour</th></tr>
+<tr><td>☐</td><td>Lettre + chat en peluche dans une valise</td><td>Introduction</td></tr>
+<tr><td>☐</td><td>Oreilles de souris, serre-têtes, feutrine x 7</td><td>Costume</td></tr>
+<tr><td>☐</td><td>Gobelets, carton, feutres</td><td>Jeu 0</td></tr>
+<tr><td>☐</td><td>Balles de ping-pong</td><td>Jeu 0 / E1</td></tr>
+<tr><td>☐</td><td>Chronomètre ou téléphone</td><td>Jeux 0, 1, 5</td></tr>
+<tr><td>☐</td><td>3 dés</td><td>Jeu 2</td></tr>
+<tr><td>☐</td><td>Pistolets à eau x 7, identiques</td><td>Jeu 3</td></tr>
+<tr><td>☐</td><td>Grandes éponges x 7</td><td>Jeu 3</td></tr>
+<tr><td>☐</td><td>Corde à linge + pinces</td><td>Jeu 3</td></tr>
+<tr><td>☐</td><td>Balance de cuisine</td><td>Jeux 3, 4</td></tr>
+<tr><td>☐</td><td>Récipients x 7 pour cuisine de boue</td><td>Jeu 4</td></tr>
+<tr><td>☐</td><td>Autocollants symboles de fromage x 7</td><td>Pièces du puzzle</td></tr>
+<tr><td>☐</td><td>Carte-puzzle, 7 pièces</td><td>Finale</td></tr>
+<tr><td>☐</td><td>Trésors x 7, emballés comme du fromage</td><td>Cachette du trésor</td></tr>
+<tr><td>☐</td><td>Mètre ruban</td><td>E2</td></tr>
+</table>
+</div>
+
+<div class="page-break"></div>
+<div style="text-align:center; padding:10px;">
+<h1 style="font-family:'Comic Sans MS',cursive; color:#8B4513; font-size:14pt;">Symboles de fromage à découper</h1>
+<div class="sticker-grid">
+  <span class="sticker swiss">Gruyère</span><span class="sticker gouda">Gouda</span><span class="sticker brie">Brie</span><span class="sticker cheddar">Cheddar</span><span class="sticker mozzarella">Mozzarella</span><span class="sticker parmesan">Parmesan</span><span class="sticker camembert">Camembert</span>
+  <span class="sticker swiss">Gruyère</span><span class="sticker gouda">Gouda</span><span class="sticker brie">Brie</span><span class="sticker cheddar">Cheddar</span><span class="sticker mozzarella">Mozzarella</span><span class="sticker parmesan">Parmesan</span><span class="sticker camembert">Camembert</span>
+  <span class="sticker swiss">Gruyère</span><span class="sticker gouda">Gouda</span><span class="sticker brie">Brie</span><span class="sticker cheddar">Cheddar</span><span class="sticker mozzarella">Mozzarella</span><span class="sticker parmesan">Parmesan</span><span class="sticker camembert">Camembert</span>
+</div>
+</div>
+
+<script>
+const DEFAULT_PLAYERS = 7;
+const GAMES = [
+  { id: '0', label: 'Jeu 0 - Déguisement' },
+  { id: '1', label: 'Jeu 1 - Reculons' },
+  { id: '2', label: 'Jeu 2 - Code du chat' },
+  { id: '3', label: 'Jeu 3 - Piège de feu' },
+  { id: '4', label: 'Jeu 4 - Chien de garde' },
+  { id: '5', label: 'Jeu 5 - Toits' },
+  { id: 'E1', label: 'E1 - Attraper' },
+  { id: 'E2', label: 'E2 - Saut' },
+];
+let selectedGames = new Set(['0','1','2','3','4','5']);
+
+function getRequiredGames() {
+  const playerCount = parseInt(document.getElementById('playerCount').value) || DEFAULT_PLAYERS;
+  return playerCount - 1;
+}
+
+function buildGameSelector() {
+  const container = document.getElementById('gameSelector');
+  container.innerHTML = '';
+  GAMES.forEach(game => {
+    const button = document.createElement('div');
+    button.className = 'game-selector-label' + (selectedGames.has(game.id) ? ' selected' : '');
+    button.textContent = game.label;
+    button.setAttribute('data-gid', game.id);
+    button.onclick = () => toggleGame(game.id);
+    container.appendChild(button);
+  });
+  updateGameCountDisplay();
+}
+
+function toggleGame(id) {
+  const required = getRequiredGames();
+  if (selectedGames.has(id)) {
+    selectedGames.delete(id);
+  } else {
+    if (selectedGames.size >= required) return;
+    selectedGames.add(id);
+  }
+  refreshGameVisuals();
+}
+
+function refreshGameVisuals() {
+  document.querySelectorAll('#gameSelector .game-selector-label').forEach(button => {
+    const gameId = button.getAttribute('data-gid');
+    button.className = 'game-selector-label' + (selectedGames.has(gameId) ? ' selected' : '');
+  });
+  document.querySelectorAll('.game-block[data-game]').forEach(block => {
+    const gameId = block.getAttribute('data-game');
+    if (gameId === 'finale') return;
+    block.classList.toggle('game-hidden', !selectedGames.has(gameId));
+  });
+  updateGameCountDisplay();
+}
+
+function updateGameCountDisplay() {
+  const required = getRequiredGames();
+  document.getElementById('selectedCount').textContent = selectedGames.size;
+  document.getElementById('requiredCount').textContent = required;
+  document.getElementById('gameCountInfo').textContent = `(${required} jeux pour ${required + 1} joueurs)`;
+}
+
+function updatePlayerCount(playerCount) {
+  const normalizedCount = Math.max(2, Math.min(9, parseInt(playerCount) || DEFAULT_PLAYERS));
+  document.getElementById('playerCount').value = normalizedCount;
+  const required = normalizedCount - 1;
+
+  while (selectedGames.size > required) {
+    const selectedIds = Array.from(selectedGames);
+    selectedGames.delete(selectedIds[selectedIds.length - 1]);
+  }
+  for (const id of GAMES.map(game => game.id)) {
+    if (selectedGames.size >= required) break;
+    selectedGames.add(id);
+  }
+
+  const container = document.getElementById('nameInputs');
+  const names = Array.from(container.querySelectorAll('.name-input')).map(input => input.value);
+  container.innerHTML = '';
+  for (let index = 0; index < normalizedCount; index++) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'name-input';
+    input.placeholder = `Joueur ${index + 1}`;
+    if (names[index]) input.value = names[index];
+    container.appendChild(input);
+  }
+
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    const header = table.querySelector('tr');
+    if (!header) return;
+    const columnCount = header.querySelectorAll('th').length;
+    if (columnCount === 0) return;
+    table.querySelectorAll('tr:not(:first-child)').forEach(row => row.remove());
+    for (let rowIndex = 0; rowIndex < normalizedCount; rowIndex++) {
+      const row = document.createElement('tr');
+      for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+        const cell = document.createElement('td');
+        cell.className = 'result-cell';
+        cell.setAttribute('contenteditable', 'true');
+        cell.style.cursor = 'text';
+        row.appendChild(cell);
+      }
+      table.appendChild(row);
+    }
+  });
+
+  buildGameSelector();
+  refreshGameVisuals();
+}
+
+function applyNames() {
+  const names = Array.from(document.querySelectorAll('.name-input')).map((input, index) => input.value.trim() || `Joueur ${index + 1}`);
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    table.querySelectorAll('tr').forEach((row, index) => {
+      if (index === 0) return;
+      const firstCell = row.querySelector('td.result-cell');
+      if (firstCell && index - 1 < names.length) {
+        firstCell.textContent = names[index - 1];
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlayerCount(DEFAULT_PLAYERS);
+});
+</script>
+
+</body>
+</html>

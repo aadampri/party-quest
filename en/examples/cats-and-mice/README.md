@@ -9,7 +9,7 @@ The house cat **Monsieur Moustache** is on holiday. The mice (children) must fin
 ## Files
 
 - **[racket-template.html](racket-template.html)** — 1:1 craft template for cat ping-pong rackets
-- **[gameplan.html](gameplan.html)** — Printable game plan with interactive UI *(coming soon)*
+- **[gameplan.html](gameplan.html)** — Printable game plan with interactive UI
 - **[design.md](design.md)** — Design notes and variants
 
 ## Features
@@ -18,3 +18,5 @@ The house cat **Monsieur Moustache** is on holiday. The mice (children) must fin
 - Complexity level: Medium (puzzle pieces)
 - Cheese symbols as stickers (7 types)
 - Dynamic player count (2–9)
+- Game selection by click
+- A4 print optimized

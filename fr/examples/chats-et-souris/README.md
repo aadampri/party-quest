@@ -9,7 +9,7 @@ Le chat de la maison **Monsieur Moustache** est en vacances. Les souris (les enf
 ## Fichiers
 
 - **[raquette-gabarit.html](raquette-gabarit.html)** — Gabarit 1:1 pour raquettes de ping-pong chat
-- **[plan-de-jeu.html](plan-de-jeu.html)** — Plan de jeu imprimable avec interface interactive *(bientôt)*
+- **[plan-de-jeu.html](plan-de-jeu.html)** — Plan de jeu imprimable avec interface interactive
 - **[design.md](design.md)** — Notes de conception et variantes
 
 ## Caractéristiques
@@ -18,3 +18,5 @@ Le chat de la maison **Monsieur Moustache** est en vacances. Les souris (les enf
 - Niveau de complexité : Moyen (pièces de puzzle)
 - Symboles de fromage comme autocollants (7 types)
 - Nombre de joueurs dynamique (2–9)
+- Sélection des jeux par clic
+- Optimisé pour impression A4

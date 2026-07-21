@@ -644,28 +644,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updatePlayerCount(DEFAULT_PLAYERS);
 });
 </script>
-}
-
-function applyNames() {
-  const inputs = document.querySelectorAll('.name-input');
-  const names = Array.from(inputs).map((inp, i) => inp.value.trim() || `Spieler ${i + 1}`);
-
-  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
-    const rows = table.querySelectorAll('tr');
-    rows.forEach((row, i) => {
-      if (i === 0) return;
-      const firstCell = row.querySelector('td.result-cell');
-      if (firstCell && (i - 1) < names.length) {
-        firstCell.textContent = names[i - 1];
-      }
-    });
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  updatePlayerCount(DEFAULT_PLAYERS);
-});
-</script>
 
 </body>
 </html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="xx">
+<head>
+<meta charset="UTF-8">
+<title>Party Quest Game Plan</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+  h1 { text-align: center; font-size: 18pt; margin-bottom: 5px; }
+  h2 { font-size: 13pt; border-bottom: 2px solid #333; padding-bottom: 3px; margin-top: 20px; }
+  h3 { font-size: 11pt; margin-bottom: 5px; margin-top: 12px; }
+  .story {
+    background: #f9f5e8;
+    border-left: 4px solid #d4a017;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-style: italic;
+  }
+  .rules {
+    background: #f0f4f8;
+    border-left: 4px solid #4a90d9;
+    padding: 8px 12px;
+    margin: 8px 0;
+  }
+  .rules ul { margin: 4px 0; padding-left: 20px; }
+  .rules li { margin: 2px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  th { background: #e8e8e8; }
+  .result-cell { min-width: 60px; height: 24px; }
+  .note { font-size: 9pt; color: #555; margin-top: 4px; }
+  .game-block { page-break-inside: avoid; margin-bottom: 10px; }
+  .game-block.game-hidden { opacity: 0.3; }
+  .ui-panel {
+    background: #fffbe6;
+    border: 2px solid #d4a017;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .ui-panel h3 { margin: 0 0 10px 0; font-size: 12pt; }
+  .ui-panel input {
+    width: 120px;
+    padding: 4px 8px;
+    margin: 3px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 10pt;
+  }
+  .ui-panel button {
+    padding: 6px 14px;
+    margin: 5px 3px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10pt;
+  }
+  .btn-apply { background: #4a90d9; color: white; }
+  .btn-print { background: #5cb85c; color: white; }
+  .game-selector-label { font-size: 9pt; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; text-align: center; }
+  .game-selector-label.selected { background: #d4edda; border-color: #28a745; }
+  .control-measure { width: 50mm; border-top: 2px solid #333; margin: 12px auto 4px; text-align: center; font-size: 8pt; padding-top: 3px; }
+  .symbol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .symbol-cell { border: 1px dashed #777; min-height: 22mm; padding: 4px; text-align: center; }
+  @media print {
+    body { padding: 5mm; margin: 0; }
+    .ui-panel { display: none !important; }
+    .game-block.game-hidden { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    table { border: 2px solid #000 !important; border-collapse: collapse !important; page-break-inside: avoid; }
+    th, td { border: 1px solid #000 !important; padding: 6px 8px !important; }
+    th { background: #e8e8e8 !important; }
+    .result-cell { height: 28px !important; }
+    .game-block { break-inside: avoid; page-break-inside: avoid; }
+    .page-break { page-break-before: always; }
+    h2, .story, .rules { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ui-panel" id="uiPanel">
+  <h3>Player setup</h3>
+  <div style="margin-bottom:8px;">
+    <label>Players: <input type="number" id="playerCount" min="2" max="9" value="7" style="width:50px;" onchange="updatePlayerCount(this.value)"></label>
+    <span id="gameCountInfo" style="margin-left:10px; font-size:9pt; color:#555;"></span>
+  </div>
+  <div id="nameInputs"></div>
+  <div style="margin-top:12px;">
+    <strong>Select games</strong> (<span id="selectedCount">0</span>/<span id="requiredCount">0</span> needed):
+    <div id="gameSelector" style="margin-top:5px; display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;"></div>
+  </div>
+  <div style="margin-top:10px;">
+    <button class="btn-apply" onclick="applyNames()">Apply names</button>
+    <button class="btn-print" onclick="window.print()">Print / PDF</button>
+  </div>
+</div>
+
+<h1>Party Quest: [Theme Title]</h1>
+<p style="text-align:center;">[Player count] players · [Game count] games · Ages [range]</p>
+<div class="control-measure">5 cm control measure</div>
+
+<h2>Opening Story</h2>
+<div class="story">[Read this story prompt to introduce the quest.]</div>
+
+<h2>Symbols - Legend</h2>
+<div class="symbol-grid">
+  <div class="symbol-cell"><strong>Symbol 1</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 2</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 3</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 4</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 5</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 6</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 7</strong><br>[Draw or paste icon]</div>
+  <div class="symbol-cell"><strong>Symbol 8</strong><br>[Draw or paste icon]</div>
+</div>
+
+<h2>Game Flow</h2>
+<div class="rules">
+<ul>
+<li>Winner chooses who receives the next token or puzzle piece.</li>
+<li>Recipient marks it with their symbol.</li>
+<li>The final token goes to the last child without one.</li>
+<li>At the end, combine the tokens and reveal the treasure or finale.</li>
+</ul>
+</div>
+
+<div class="page-break"></div>
+
+<div class="game-block" data-game="0">
+<h2>Game 0 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #1.</p>
+</div>
+
+<div class="game-block" data-game="1">
+<h2>Game 1 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #2.</p>
+</div>
+
+<div class="game-block" data-game="2">
+<h2>Game 2 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #3.</p>
+</div>
+
+<div class="game-block" data-game="3">
+<h2>Game 3 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #4.</p>
+</div>
+
+<div class="game-block" data-game="4">
+<h2>Game 4 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #5.</p>
+</div>
+
+<div class="game-block" data-game="5">
+<h2>Game 5 - [Name]</h2>
+<div class="story">[Story framing for this challenge.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+<p class="note">Winner chooses the recipient for piece #6.</p>
+</div>
+
+<div class="game-block" data-game="finale">
+<h2>Finale - [Name]</h2>
+<div class="story">[Final story prompt.]</div>
+<p>[Finale instructions.]</p>
+</div>
+
+<div class="game-block" data-game="E1">
+<h2>E1 - Backup Game</h2>
+<div class="story">[Backup story framing.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+</div>
+
+<div class="game-block" data-game="E2">
+<h2>E2 - Backup Game</h2>
+<div class="story">[Backup story framing.]</div>
+<div class="rules"><ul><li>[Rule]</li><li>[Win condition]</li></ul></div>
+<table><tr><th>Player</th><th>Result</th><th>Place</th></tr></table>
+</div>
+
+<div class="page-break"></div>
+<h2>Materials Checklist</h2>
+<table>
+<tr><th>Done</th><th>Material</th><th>For</th></tr>
+<tr><td>☐</td><td>[Material]</td><td>[Game or scene]</td></tr>
+<tr><td>☐</td><td>[Material]</td><td>[Game or scene]</td></tr>
+<tr><td>☐</td><td>[Material]</td><td>[Game or scene]</td></tr>
+</table>
+
+<div class="page-break"></div>
+<h2>Cut-Out Symbols</h2>
+<div class="symbol-grid">
+  <div class="symbol-cell">Symbol 1</div><div class="symbol-cell">Symbol 2</div><div class="symbol-cell">Symbol 3</div><div class="symbol-cell">Symbol 4</div>
+  <div class="symbol-cell">Symbol 5</div><div class="symbol-cell">Symbol 6</div><div class="symbol-cell">Symbol 7</div><div class="symbol-cell">Symbol 8</div>
+</div>
+
+<script>
+const DEFAULT_PLAYERS = 7;
+const PLAYER_LABEL = 'Player';
+const GAMES = [
+  { id: '0', label: 'Game 0' },
+  { id: '1', label: 'Game 1' },
+  { id: '2', label: 'Game 2' },
+  { id: '3', label: 'Game 3' },
+  { id: '4', label: 'Game 4' },
+  { id: '5', label: 'Game 5' },
+  { id: 'E1', label: 'E1' },
+  { id: 'E2', label: 'E2' },
+];
+let selectedGames = new Set(['0','1','2','3','4','5']);
+
+function getRequiredGames() {
+  const playerCount = parseInt(document.getElementById('playerCount').value) || DEFAULT_PLAYERS;
+  return playerCount - 1;
+}
+
+function buildGameSelector() {
+  const container = document.getElementById('gameSelector');
+  container.innerHTML = '';
+  GAMES.forEach(game => {
+    const button = document.createElement('div');
+    button.className = 'game-selector-label' + (selectedGames.has(game.id) ? ' selected' : '');
+    button.textContent = game.label;
+    button.setAttribute('data-gid', game.id);
+    button.onclick = () => toggleGame(game.id);
+    container.appendChild(button);
+  });
+  updateGameCountDisplay();
+}
+
+function toggleGame(id) {
+  const required = getRequiredGames();
+  if (selectedGames.has(id)) {
+    selectedGames.delete(id);
+  } else {
+    if (selectedGames.size >= required) return;
+    selectedGames.add(id);
+  }
+  refreshGameVisuals();
+}
+
+function refreshGameVisuals() {
+  document.querySelectorAll('#gameSelector .game-selector-label').forEach(button => {
+    const gameId = button.getAttribute('data-gid');
+    button.className = 'game-selector-label' + (selectedGames.has(gameId) ? ' selected' : '');
+  });
+  document.querySelectorAll('.game-block[data-game]').forEach(block => {
+    const gameId = block.getAttribute('data-game');
+    if (gameId === 'finale') return;
+    block.classList.toggle('game-hidden', !selectedGames.has(gameId));
+  });
+  updateGameCountDisplay();
+}
+
+function updateGameCountDisplay() {
+  const required = getRequiredGames();
+  document.getElementById('selectedCount').textContent = selectedGames.size;
+  document.getElementById('requiredCount').textContent = required;
+  document.getElementById('gameCountInfo').textContent = `(${required} games for ${required + 1} players)`;
+}
+
+function updatePlayerCount(playerCount) {
+  const normalizedCount = Math.max(2, Math.min(9, parseInt(playerCount) || DEFAULT_PLAYERS));
+  document.getElementById('playerCount').value = normalizedCount;
+  const required = normalizedCount - 1;
+
+  while (selectedGames.size > required) {
+    const selectedIds = Array.from(selectedGames);
+    selectedGames.delete(selectedIds[selectedIds.length - 1]);
+  }
+  for (const id of GAMES.map(game => game.id)) {
+    if (selectedGames.size >= required) break;
+    selectedGames.add(id);
+  }
+
+  const container = document.getElementById('nameInputs');
+  const names = Array.from(container.querySelectorAll('.name-input')).map(input => input.value);
+  container.innerHTML = '';
+  for (let index = 0; index < normalizedCount; index++) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'name-input';
+    input.placeholder = `${PLAYER_LABEL} ${index + 1}`;
+    if (names[index]) input.value = names[index];
+    container.appendChild(input);
+  }
+
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    const header = table.querySelector('tr');
+    if (!header) return;
+    const columnCount = header.querySelectorAll('th').length;
+    if (columnCount === 0) return;
+    table.querySelectorAll('tr:not(:first-child)').forEach(row => row.remove());
+    for (let rowIndex = 0; rowIndex < normalizedCount; rowIndex++) {
+      const row = document.createElement('tr');
+      for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+        const cell = document.createElement('td');
+        cell.className = 'result-cell';
+        cell.setAttribute('contenteditable', 'true');
+        cell.style.cursor = 'text';
+        row.appendChild(cell);
+      }
+      table.appendChild(row);
+    }
+  });
+
+  buildGameSelector();
+  refreshGameVisuals();
+}
+
+function applyNames() {
+  const names = Array.from(document.querySelectorAll('.name-input')).map((input, index) => input.value.trim() || `${PLAYER_LABEL} ${index + 1}`);
+  document.querySelectorAll('.game-block[data-game] table').forEach(table => {
+    table.querySelectorAll('tr').forEach((row, index) => {
+      if (index === 0) return;
+      const firstCell = row.querySelector('td.result-cell');
+      if (firstCell && index - 1 < names.length) {
+        firstCell.textContent = names[index - 1];
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlayerCount(DEFAULT_PLAYERS);
+});
+</script>
+
+</body>
+</html>

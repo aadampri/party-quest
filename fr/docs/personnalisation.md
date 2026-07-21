@@ -36,4 +36,5 @@ Le thème est un habillage — il ne change pas la mécanique. Exemples :
 ## Gabarits disponibles
 
 - `templates/racket-template.html` — Raquette-gobelet (ajouter `?lang=fr`)
+- `templates/gameplan-blank.html` — Plan de jeu A4 avec interface joueurs/jeux
 - *(Plus à venir)*
